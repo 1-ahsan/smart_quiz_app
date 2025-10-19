@@ -58,7 +58,7 @@ class _studentLoginState extends State<studentLogin> {
               SizedBox(height: 50,),
               ElevatedButton(
                   onPressed: (){
-
+                    Navigator.pushNamed(context, '/studentDashboard');
                   },
                   child: Text('Verify')
               )
