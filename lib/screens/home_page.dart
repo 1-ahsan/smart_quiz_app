@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'teacher_login.dart';
+import 'student_login.dart';
 
 class homePage extends StatelessWidget {
   homePage({super.key});
@@ -47,7 +49,7 @@ class homePage extends StatelessWidget {
                             minimumSize:  Size(double.infinity,50),
                           ),
                           onPressed: (){
-                            Navigator.pushNamed(context, '/teacherLogin');
+                            Navigator.push(context, MaterialPageRoute(builder:(context) => teacherLogin()));
                           },
                           child: Text('Teacher login')
                       ),
@@ -59,7 +61,7 @@ class homePage extends StatelessWidget {
                           minimumSize:  Size(double.infinity,50),
                         ),
                         onPressed: (){
-                          Navigator.pushNamed(context, '/studentLogin');
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => studentLogin()));
                         },
                         child: Text('Student login')
                     ),

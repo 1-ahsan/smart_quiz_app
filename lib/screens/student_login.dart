@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'student_dashboard.dart';
 
 class studentLogin extends StatefulWidget{
   studentLogin({super.key});
@@ -58,7 +59,7 @@ class _studentLoginState extends State<studentLogin> {
               SizedBox(height: 50,),
               ElevatedButton(
                   onPressed: (){
-                    Navigator.pushNamed(context, '/studentDashboard');
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => studentDashboard()));
                   },
                   child: Text('Verify')
               )

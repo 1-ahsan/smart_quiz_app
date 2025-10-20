@@ -58,6 +58,7 @@ class _teacherLoginstate extends State<teacherLogin> {
                 SizedBox(height: 50,),
                 ElevatedButton(
                     onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => teacherDashboard()));
                       Navigator.pushNamed(context, '/teacherDashboard');
                     },
                     child: Text('Verify')
