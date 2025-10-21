@@ -21,29 +21,32 @@ class homePage extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: <Widget>[
-              Text(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: <Widget>[
+                Text(
                   'Welcome to the App!',
-                style: TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              SizedBox(height: 40),
-              Text(
-                'Kindly Select the Login Method',
-                style: TextStyle(
-                  fontSize: 16,
-                  // fontWeight: FontWeight.w300,
+                SizedBox(height: 40),
+                Image(image: AssetImage('assets/images/img.png')),
+                SizedBox(height: 200),
+                Text(
+                  'Kindly Select the Login Method',
+                  style: TextStyle(
+                    fontSize: 16,
+                    // fontWeight: FontWeight.w300,
+                  ),
                 ),
-              ),
-              SizedBox(height: 200,),
-              Row(
-                children: <Widget>[
-                  Expanded(
+                SizedBox(height: 30,),
+                Row(
+                  children: <Widget>[
+                    Expanded(
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             minimumSize:  Size(double.infinity,50),
@@ -53,25 +56,26 @@ class homePage extends StatelessWidget {
                           },
                           child: Text('Teacher login')
                       ),
-                  ),
-                  SizedBox(width: 30,),
-                  Expanded(
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize:  Size(double.infinity,50),
-                        ),
-                        onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => studentLogin()));
-                        },
-                        child: Text('Student login')
                     ),
-                  ),
+                    SizedBox(width: 30,),
+                    Expanded(
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize:  Size(double.infinity,50),
+                          ),
+                          onPressed: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => studentLogin()));
+                          },
+                          child: Text('Student login')
+                      ),
+                    ),
 
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
-        ),
+        )
       ),
     );
   }
