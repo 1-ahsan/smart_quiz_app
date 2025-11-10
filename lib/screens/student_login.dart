@@ -116,7 +116,7 @@ class _studentLoginState extends State<studentLogin> {
                                     foregroundColor: Colors.white,
                                   ),
                                   onPressed: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => studentDashboard()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => StudentDashboard()));
                                   },
                                   child: Text('Verify')
                               )
