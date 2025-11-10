@@ -34,7 +34,7 @@ class homePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 40),
-                Image(image: AssetImage('assets/images/img.png')),
+                Image(image: AssetImage('assets/images/logo.png')),
                 SizedBox(height: 200),
                 Text(
                   'Kindly Select the Login Method',

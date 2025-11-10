@@ -51,7 +51,7 @@ class _teacherLoginstate extends State<teacherLogin> {
                   controller: txtControlerPassword,
                   decoration: InputDecoration(
                       label: Text('Password',style: TextStyle(color: Colors.grey),),
-                      prefixIcon: Icon(Icons.password),
+                      prefixIcon: Icon(Icons.email),
                       border: OutlineInputBorder()
                   ),
                 ),

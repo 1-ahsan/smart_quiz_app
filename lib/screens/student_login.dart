@@ -35,36 +35,99 @@ class _studentLoginState extends State<studentLogin> {
       ),
       body: SafeArea(
         child: Padding(
-            padding: EdgeInsets.all(16),
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 150,),
-              TextField(
-                controller: txtControlerEmail,
-                decoration: InputDecoration(
-                  label: Text('Email',style: TextStyle(color: Colors.grey),),
-                  prefixIcon: Icon(Icons.email),
-                  border: OutlineInputBorder()
+          padding: EdgeInsets.all(0),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Stack(
+              children: <Widget>[
+                SizedBox(
+                  height: 300,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/images/purpleBackground.png"),
+                        fit: BoxFit.cover,
+                      )
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Sign Up Now",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 28,
+                              color: Colors.white
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          Text("Join the smart Quiz app",
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
                 ),
-              ),
-              SizedBox(height: 50,),
-              TextField(
-                controller: txtControlerPassword,
-                decoration: InputDecoration(
-                  label: Text('Password',style: TextStyle(color: Colors.grey),),
-                  prefixIcon: Icon(Icons.password),
-                  border: OutlineInputBorder()
+
+                Positioned(
+                    top: 250,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20)
+                            )
+                        ),
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 50,),
+                              TextField(
+                                controller: txtControlerPassword,
+                                decoration: InputDecoration(
+                                    label: Text('Email',style: TextStyle(color: Colors.grey),),
+                                    prefixIcon: Icon(Icons.email),
+                                    border: OutlineInputBorder()
+                                ),
+                              ),
+                              SizedBox(height: 20,),
+                              TextField(
+                                controller: txtControlerPassword,
+                                decoration: InputDecoration(
+                                    label: Text('Password',style: TextStyle(color: Colors.grey),),
+                                    prefixIcon: Icon(Icons.password),
+                                    border: OutlineInputBorder()
+                                ),
+                              ),
+                              SizedBox(height: 50,),
+                              ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.purple,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  onPressed: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => studentDashboard()));
+                                  },
+                                  child: Text('Verify')
+                              )
+                            ],
+                          ),
+                        )
+                    )
                 ),
-              ),
-              SizedBox(height: 50,),
-              ElevatedButton(
-                  onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => studentDashboard()));
-                  },
-                  child: Text('Verify')
-              )
-            ],
-          ),
+              ],
+            ),
+          )
         )
       ),
     );
