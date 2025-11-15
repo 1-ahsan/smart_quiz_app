@@ -16,6 +16,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
   int _index=0;
 
   final List<Widget> _pages = [
+    Dashboard(),
     Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -39,7 +40,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
     ),
 
-    Dashboard(),
+
 
   ];
 
@@ -51,17 +52,56 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
         leading: IconButton(
             onPressed: (){
-              Navigator.pop(context);
+
             },
-            icon: Icon(Icons.arrow_back)
+          icon: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+            ),
+            child: Image.asset("assets/images/hatLogo.png"),
+            height: 30,
+            width: 30,
+          )
         ),
         title: Text(
-          "Teacher's Dashboard",
+          "Student's Dashboard",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+              onPressed: (){
+                
+              },
+              icon: Icon(Icons.search),
+          ),
+          IconButton(
+              onPressed: (){
+
+              },
+              icon: Icon(Icons.notifications),
+          ),
+          IconButton(
+              onPressed: (){
+                
+              }, 
+              icon: Icon(Icons.info_rounded),
+          ),
+        ],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(
+                  "assets/images/purpleBackground.png",
+                ),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),

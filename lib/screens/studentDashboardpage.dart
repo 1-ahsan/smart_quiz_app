@@ -144,19 +144,19 @@ Widget b() {
         children: const [
           CategoryCard(
             imagePath: 'assets/images/logo.png',
-            label: 'Music',
+            label: 'OOP',
           ),
           CategoryCard(
             imagePath: 'assets/images/logo.png',
-            label: 'Sports',
+            label: 'Web',
           ),
           CategoryCard(
             imagePath: 'assets/images/logo.png',
-            label: 'Design',
+            label: 'Prpgramming Fundamental',
           ),
           CategoryCard(
             imagePath: 'assets/images/logo.png',
-            label: 'Animals',
+            label: 'Operating System',
           ),
         ],
       ),
