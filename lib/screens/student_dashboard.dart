@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'studentDashboardpage.dart';
+import 'profilePage.dart';
 //
 
 class StudentDashboard extends StatefulWidget {
@@ -17,6 +18,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   final List<Widget> _pages = [
     Dashboard(),
+    profile(),
     Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
