@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_quiz_app/screens/student_login.dart';
 
 
 class profile extends StatelessWidget {
@@ -122,18 +123,23 @@ class profile extends StatelessWidget {
       margin: EdgeInsets.all(16),
       child: Container(
         margin: EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(Icons.exit_to_app, color: Colors.purple,),
-            SizedBox(width: 10,),
-            Text(
+        child: TextButton(
+          onPressed: (){
+
+          },
+          child: Row(
+            children: [
+              Icon(Icons.exit_to_app, color: Colors.purple,),
+              SizedBox(width: 10,),
+              Text(
                 "Log out",
-              style: TextStyle(
-                color: Colors.purple,
-                wordSpacing: 2,
+                style: TextStyle(
+                  color: Colors.purple,
+                  wordSpacing: 2,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

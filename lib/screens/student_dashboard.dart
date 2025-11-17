@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'studentDashboardpage.dart';
 import 'profilePage.dart';
-//
+import 'coursesPage.dart';
+
 
 class StudentDashboard extends StatefulWidget {
   StudentDashboard({super.key});
@@ -18,6 +19,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   final List<Widget> _pages = [
     Dashboard(),
+    courses(),
     profile(),
     Padding(
       padding: const EdgeInsets.all(20),
@@ -111,6 +113,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.purple,
         unselectedItemColor: Colors.grey,
+        currentIndex: _index,
         onTap: (i) {
           setState(() {
             _index = i;
@@ -122,69 +125,16 @@ class _StudentDashboardState extends State<StudentDashboard> {
             label: "Home",
           ),
           BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+            label: "Courses",
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.perm_identity_rounded),
             label: "Profile",
-          )
+          ),
         ],
       ),
     );
   }
 
 }
-
-// class studentDashboard extends StatelessWidget {
-//   studentDashboard({super.key});
-//
-//   @override
-//   Widget build(BuildContext context){
-//     return Scaffold(
-//       appBar: AppBar(
-//         leading: IconButton(
-//             onPressed: (){
-//               Navigator.pop(context);
-//             },
-//             icon: Icon(Icons.arrow_back)
-//         ),
-//         title: Text(
-//           "Teacher's Dashboard",
-//           style: TextStyle(
-//             fontSize: 20,
-//             fontWeight: FontWeight.bold,
-//           ),
-//         ),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(20),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.stretch,
-//           children: [
-//             ElevatedButton(
-//               onPressed: () {},
-//               child: const Text('View Available Quizzes'),
-//             ),
-//             const SizedBox(height: 15),
-//             ElevatedButton(
-//               onPressed: () {},
-//               child: const Text('View Submitted Quizzes'),
-//             ),
-//             const SizedBox(height: 15),
-//             ElevatedButton(
-//               onPressed: () {},
-//               child: const Text('View Results'),
-//             ),
-//           ],
-//         ),
-//       ),
-//       bottomNavigationBar: BottomNavigationBar(
-//         selectedItemColor: Colors.purple,
-//         unselectedItemColor: Colors.grey,
-//         items: [
-//           BottomNavigationBarItem(icon: Icon(
-//               Icons.dashboard_customize),
-//             label: "Home",
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
