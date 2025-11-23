@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'teacher_login.dart';
-import 'student_login.dart';
+import 'student/student_login.dart';
 
 class homePage extends StatelessWidget {
   homePage({super.key});

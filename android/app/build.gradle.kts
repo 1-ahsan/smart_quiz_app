@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.smart_quiz_app"
+    namespace = "com.company.smartQuizApp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'student_dashboard.dart';
 import 'regestrationForm.dart';
 
@@ -13,6 +15,84 @@ class _studentLoginState extends State<studentLogin> {
 
   final TextEditingController txtControlerID = TextEditingController();
   final TextEditingController txtControlerPassword = TextEditingController();
+
+  bool _isLoading = false;
+
+
+  @override
+  void dispose(){
+    txtControlerID.dispose();
+    txtControlerPassword.dispose();
+    super.dispose();
+  }
+
+  Future<void> _userLogin() async{
+    String id = txtControlerID.text.trim();
+    String password = txtControlerPassword.text.trim();
+
+    if(id.isEmpty || password.isEmpty) {
+      if(context.mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Kindly fill all the fields"),),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      String email = "$id@quizapp.com";
+
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if(context.mounted){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => StudentDashboard()));
+      }
+      return;
+    } on FirebaseAuthException catch (e){
+      if(context.mounted){
+        String msg = "Login Error!!";
+        if(e.code == 'user-not-found' || e.code == 'invalid-credential'){
+          msg = "Account not found!!";
+        }
+        else if(e.code == 'wrong-password'){
+          msg = "Kindly check your password";
+        }
+        else if(e.code == 'invalid-email'){
+          msg = "User id do not found";
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(msg),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+    catch (e){
+      if(context.mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("An error appears! Kindly try in a while"),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+
+    if(context.mounted){
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
 
 
@@ -119,13 +199,16 @@ class _studentLoginState extends State<studentLogin> {
                                   SizedBox(
                                     width: double.infinity,
                                     height: 40,
-                                    child: ElevatedButton(
+                                    child: _isLoading
+                                      ? const Center(child: CircularProgressIndicator(),)
+                                    : ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Colors.purple,
                                           foregroundColor: Colors.white,
                                         ),
                                         onPressed: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context) => StudentDashboard()));
+                                          _userLogin();
+                                          // Navigator.push(context, MaterialPageRoute(builder: (context) => StudentDashboard()));
                                         },
                                         child: Text('Verify')
                                     ),

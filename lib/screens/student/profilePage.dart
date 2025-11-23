@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:smart_quiz_app/screens/student_login.dart';
+import 'package:smart_quiz_app/screens/student/student_login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 class profile extends StatelessWidget {
@@ -114,7 +115,7 @@ class profile extends StatelessWidget {
     );
   }
 
-  Widget logoutCart(){
+  Widget logoutCart(BuildContext context){
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -125,7 +126,7 @@ class profile extends StatelessWidget {
         margin: EdgeInsets.all(16),
         child: TextButton(
           onPressed: (){
-
+            _logout(context);
           },
           child: Row(
             children: [
@@ -144,6 +145,17 @@ class profile extends StatelessWidget {
       ),
     );
   }
+
+  void _logout(BuildContext context) async{
+    await FirebaseAuth.instance.signOut();
+
+    if(!(context.mounted)) return;
+
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => studentLogin()),
+        (Route<dynamic> route) => false,
+    );
+  }
   
   @override
   Widget build(BuildContext context){
@@ -154,7 +166,7 @@ class profile extends StatelessWidget {
           children: [
             profileCart(),
             settingCard(),
-            logoutCart(),
+            logoutCart(context),
           ],
         ),
       ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:smart_quiz_app/screens/student_dashboard.dart';
+
 import 'student_login.dart';
 
 class Registrationform extends StatefulWidget{
@@ -32,59 +32,49 @@ class _regestrationFormState extends State<Registrationform> {
 
 
   Future<void> _registerUser() async {
-    // Show loading circle
-    setState(() {
-      _isLoading = true;
-    });
+    // setState(() {
+    //   _isLoading = true;
+    // });
 
     try {
-      // --- THIS IS THE NEW LOGIC ---
-      // Get the Sap ID and create a "fake" email for Firebase Auth
       String sapId = txtControllerId.text.trim();
       String password = txtControllerPassword.text.trim();
-
-      // IMPORTANT: Use a domain you control or a placeholder like @quizapp.com
       String fakeEmail = "$sapId@quizapp.com";
-      // --- END NEW LOGIC ---
 
-
-      // Step 1: Create user with Firebase Auth using the FAKE email
       UserCredential userCredential =
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: fakeEmail, // Use the fake email
+        email: fakeEmail,
         password: password,
       );
 
-      // Step 2: Save additional data to Cloud Firestore
       if (userCredential.user != null) {
         String uid = userCredential.user!.uid;
 
-        // Using .set() will create the document if it doesn't exist
         await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'sapId': sapId, // Store the REAL Sap ID
+          'sapId': sapId,
           'fullName': txtControllerName.text.trim(),
           'semester': txtControllerSemester.text.trim(),
-          'email': fakeEmail, // Store the fake email for reference
-          'role': 'student', // Good to add a role
-          'createdAt': FieldValue.serverTimestamp(), // To know when they joined
+          'email': fakeEmail,
+          'createdAt': FieldValue.serverTimestamp(),
         });
 
-        // Step 3: Navigate to Dashboard
+
+
+
         if (context.mounted) {
-          // Use pushReplacement so the user can't go "back" to the registration page
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => studentLogin()),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Registered")),
           );
-          setState(() {
-            _isLoading = false;
-          });
-          return;
+          Navigator.pop(context);
         }
+        return;
       }
     } on FirebaseAuthException catch (e) {
-      // Handle errors (e.g., email already in use, weak password)
       if (context.mounted) {
+        // setState(() {
+        //   _isLoading = false;
+        // });
+
         String message = "Registration failed";
         if (e.code == 'email-already-in-use') {
           message = "This Sap ID is already registered.";
@@ -93,30 +83,29 @@ class _regestrationFormState extends State<Registrationform> {
         } else {
           message = e.message ?? message;
         }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(message)),
         );
       }
     } catch (e) {
-      // Handle any other errors
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text("An unexpected error occurred. Please try again.")),
+          SnackBar(content: Text("An unexpected error occurred. Please try again.")),
         );
       }
     }
-
-    if (context.mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    // if (context.mounted) {
+    //   setState(() {
+    //     _isLoading = false;
+    //   });
+    // }
   }
 
 
 
-    @override
+
+  @override
   Widget build(BuildContext context){
     return Scaffold(
       body: SingleChildScrollView(
@@ -174,9 +163,11 @@ class _regestrationFormState extends State<Registrationform> {
             SizedBox(
               width: double.infinity,
               height: 40,
-              child: _isLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
+              child:
+                  //     _isLoading
+                  // ? Center(child: CircularProgressIndicator())
+                  // :
+                    ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,
                     foregroundColor: Colors.white,
