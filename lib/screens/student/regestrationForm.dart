@@ -32,9 +32,9 @@ class _regestrationFormState extends State<Registrationform> {
 
 
   Future<void> _registerUser() async {
-    // setState(() {
-    //   _isLoading = true;
-    // });
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       String sapId = txtControllerId.text.trim();
@@ -55,11 +55,9 @@ class _regestrationFormState extends State<Registrationform> {
           'fullName': txtControllerName.text.trim(),
           'semester': txtControllerSemester.text.trim(),
           'email': fakeEmail,
+          'role': 'student',
           'createdAt': FieldValue.serverTimestamp(),
         });
-
-
-
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -71,9 +69,9 @@ class _regestrationFormState extends State<Registrationform> {
       }
     } on FirebaseAuthException catch (e) {
       if (context.mounted) {
-        // setState(() {
-        //   _isLoading = false;
-        // });
+        setState(() {
+          _isLoading = false;
+        });
 
         String message = "Registration failed";
         if (e.code == 'email-already-in-use') {
@@ -95,11 +93,11 @@ class _regestrationFormState extends State<Registrationform> {
         );
       }
     }
-    // if (context.mounted) {
-    //   setState(() {
-    //     _isLoading = false;
-    //   });
-    // }
+    if (context.mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
 
@@ -163,11 +161,9 @@ class _regestrationFormState extends State<Registrationform> {
             SizedBox(
               width: double.infinity,
               height: 40,
-              child:
-                  //     _isLoading
-                  // ? Center(child: CircularProgressIndicator())
-                  // :
-                    ElevatedButton(
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.purple,
                     foregroundColor: Colors.white,

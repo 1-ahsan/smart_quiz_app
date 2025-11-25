@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'teacher_dashboard.dart';
 
@@ -10,9 +12,78 @@ class teacherLogin extends StatefulWidget{
 
 class _teacherLoginstate extends State<teacherLogin> {
 
+  bool _isLoading = false;
 
   final TextEditingController txtControlerEmail = TextEditingController();
   final TextEditingController txtControlerPassword = TextEditingController();
+
+  @override
+  void dispose() {
+    txtControlerEmail.dispose();
+    txtControlerPassword.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loginTeacher() async{
+    String em = txtControlerEmail.text.trim();
+    String password = txtControlerPassword.text.trim();
+
+    String email = "$em@quizapp.com";
+
+    if(email.isEmpty || password.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please insert all the fields.")),
+      );
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+
+    try{
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password
+      );
+
+      if(userCredential.user != null){
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if(userDoc.exists && userDoc['role'] == 'teacher'){
+          if(context.mounted){
+            Navigator.push(context , MaterialPageRoute(builder: (context) => teacherDashboard()));
+          }
+          return;
+        }
+        else{
+          FirebaseAuth.instance.signOut();
+          if (context.mounted){
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Access Denied: Only teachers are allowed."),
+              backgroundColor: Colors.red,)
+            );
+          }
+        }
+      }
+    }
+    on FirebaseAuthException catch(e){
+      if(context.mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? "Login Error.."))
+        );
+      }
+    }
+    finally{
+      if(context.mounted){
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
   
   @override
   Widget build(BuildContext context){
@@ -92,7 +163,7 @@ class _teacherLoginstate extends State<teacherLogin> {
                                 children: <Widget>[
                                   SizedBox(height: 50,),
                                   TextField(
-                                    controller: txtControlerPassword,
+                                    controller: txtControlerEmail,
                                     decoration: InputDecoration(
                                         label: Text('Email',style: TextStyle(color: Colors.grey),),
                                         prefixIcon: Icon(Icons.email),
@@ -109,13 +180,15 @@ class _teacherLoginstate extends State<teacherLogin> {
                                     ),
                                   ),
                                   SizedBox(height: 50,),
+
                                   ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.purple,
                                         foregroundColor: Colors.white,
                                       ),
                                       onPressed: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => teacherDashboard()));
+                                        _loginTeacher();
+                                        // Navigator.push(context, MaterialPageRoute(builder: (context) => teacherDashboard()));
                                       },
                                       child: Text('Verify')
                                   )

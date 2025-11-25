@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'teacher_login.dart';
 
 class teacherDashboard extends StatelessWidget {
   teacherDashboard({super.key});
+
+
+
+  void _logout (BuildContext context) async{
+    FirebaseAuth.instance.signOut();
+    if(context.mounted){
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => teacherLogin()),
+          (Route<dynamic> route) => false,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-            onPressed: (){
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back)
+        leading: Transform.rotate(
+            angle: 180 *3.16 / 180,
+          child: IconButton(
+              onPressed: (){
+                _logout(context);
+                // Navigator.pop(context);
+              },
+              icon: Icon(Icons.logout,)
+          ),
         ),
         title: Text(
           "Teacher's Dashboard",

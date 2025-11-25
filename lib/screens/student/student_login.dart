@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -46,14 +47,23 @@ class _studentLoginState extends State<studentLogin> {
     try {
       String email = "$id@quizapp.com";
 
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      UserCredential userCredential =  await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      if(context.mounted){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => StudentDashboard()));
+      if(userCredential.user != null){
+        DocumentSnapshot userdoc = await FirebaseFirestore.instance
+            .collection("users")
+            .doc(userCredential.user!.uid).get();
+
+        if( userdoc.exists && userdoc['role'] == 'student'){
+          if(context.mounted){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => StudentDashboard()));
+          }
+        }
       }
+
       return;
     } on FirebaseAuthException catch (e){
       if(context.mounted){
