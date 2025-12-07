@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'teacher_login.dart';
-
+import 'createQuiz.dart';
+import 'quizesScreen.dart';
 class teacherDashboard extends StatelessWidget {
   teacherDashboard({super.key});
 
@@ -45,7 +46,9 @@ class teacherDashboard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQuizScreen()));
+              },
               child: const Text('Create New Quiz'),
             ),
             const SizedBox(height: 15),
@@ -55,7 +58,9 @@ class teacherDashboard extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TeacherQuizListScreen()));
+              },
               child: const Text('View All Quizzes'),
             ),
           ],
