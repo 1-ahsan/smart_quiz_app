@@ -17,6 +17,8 @@ class _quizScreenState extends State<QuizScreen> {
   List<dynamic> _questions = [];
   int _currentIndex = 0;
   int? _selectedOptionIndex;
+  final TextEditingController _shortAnswerController = TextEditingController();
+
   int _score = 0;
   bool _isLoading = true;
   bool _isSubmitting = false;
@@ -42,26 +44,43 @@ class _quizScreenState extends State<QuizScreen> {
 
 
   void _submitAnswer() {
-    if (_selectedOptionIndex == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select an option")),
-      );
-      return;
+    var currentQuestion = _questions[_currentIndex];
+    String type = currentQuestion['type'] ?? 'MCQ';
+
+    // 1. Validation & Answer Extraction
+    if (type == 'MCQ') {
+      if (_selectedOptionIndex == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please select an option")),
+        );
+        return;
+      }
+
+      // Auto-Grade MCQ
+      String selectedAnswer = currentQuestion['options'][_selectedOptionIndex];
+      String correctAnswer = currentQuestion['correctAnswer'];
+      if (selectedAnswer == correctAnswer) {
+        _score++;
+      }
+
+    } else {
+      // Short Answer Logic
+      if (_shortAnswerController.text.trim().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please type an answer")),
+        );
+        return;
+      }
+      // Note: Short answers are not auto-graded here.
+      // In a real app, you would save _shortAnswerController.text to Firestore for the teacher.
     }
 
-    // Check Answer
-    String selectedAnswer = _questions[_currentIndex]['options'][_selectedOptionIndex];
-    String correctAnswer = _questions[_currentIndex]['correctAnswer'];
-
-    if (selectedAnswer == correctAnswer) {
-      _score++;
-    }
-
-    // Move to next question or Finish
+    // 2. Move to next question or Finish
     if (_currentIndex < _questions.length - 1) {
       setState(() {
         _currentIndex++;
-        _selectedOptionIndex = null; // Reset selection
+        _selectedOptionIndex = null; // Reset MCQ selection
+        _shortAnswerController.clear(); // Clear text input
       });
     } else {
       _finishQuiz();
@@ -83,6 +102,12 @@ class _quizScreenState extends State<QuizScreen> {
             Text(
               "You scored $_score / ${_questions.length}",
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 5),
+            const Text(
+              "(Short answers require manual grading)",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),
@@ -152,6 +177,9 @@ class _quizScreenState extends State<QuizScreen> {
         body: const Center(child: Text("No questions found in this quiz.")),
       );
     }
+
+    var currentQuestion = _questions[_currentIndex];
+    String type = currentQuestion['type'] ?? 'MCQ';
 
     // Main Quiz UI
     return Scaffold(
@@ -234,13 +262,33 @@ class _quizScreenState extends State<QuizScreen> {
 
                           // Dynamic Options List
                           // We use the spread operator (...) to add the list of widgets
-                          ...List.generate(
-                            _questions[_currentIndex]['options'].length,
-                                (index) => option(
-                              _questions[_currentIndex]['options'][index],
-                              index,
+                          // --- CONDITIONAL RENDER BASED ON TYPE ---
+                          if (type == 'MCQ')
+                          // Show Options List for MCQ
+                            ...List.generate(
+                              currentQuestion['options'].length,
+                                  (index) => option(
+                                currentQuestion['options'][index],
+                                index,
+                              ),
+                            )
+                          else
+                          // Show TextField for Short Answer
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: TextField(
+                                controller: _shortAnswerController,
+                                maxLines: 4,
+                                decoration: InputDecoration(
+                                  hintText: "Type your answer here...",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey.shade50,
+                                ),
+                              ),
                             ),
-                          ),
 
                           const SizedBox(height: 30),
 
