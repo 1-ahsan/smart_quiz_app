@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'quizScreen.dart';
 
 class quizesPage extends StatelessWidget {
@@ -34,7 +35,16 @@ class quizesPage extends StatelessWidget {
     }
   }
 
-  Widget quizes(BuildContext context){
+  Widget _quizes(BuildContext context, DocumentSnapshot doc){
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+    // We get the ID so we can load the specific questions later
+    String quizId = doc.id;
+    String title = data['title'] ?? 'Untitled Quiz';
+
+    // In a real app, you would check a 'submissions' collection to see the status
+    String status = "Pending";
+    String dueDate = "25 Oct";
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -52,10 +62,10 @@ class quizesPage extends StatelessWidget {
               children: [
                 TextButton(
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder:  (context) => QuizScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder:  (context) => QuizScreen(quizId: quizId)));
                     },
                     child: Text(
-                      quizTitle,
+                      title,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -220,14 +230,38 @@ class quizesPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(1),
-        child: ListView(
-          children: [
-            info(),
-            quizes(context),
-          ],
-        ),
+      body: Column(
+        children: [
+          info(),
+
+          // --- THIS IS THE MAJOR CHANGE ---
+          // Instead of showing 1 static quiz, we fetch ALL quizzes from Firestore
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('quizzes').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) return const Center(child: Text("Error loading quizzes"));
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final quizzes = snapshot.data!.docs;
+
+                if (quizzes.isEmpty) {
+                  return const Center(child: Text("No quizzes available yet."));
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  itemCount: quizzes.length,
+                  itemBuilder: (context, index) {
+                    return _quizes(context, quizzes[index]);
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
