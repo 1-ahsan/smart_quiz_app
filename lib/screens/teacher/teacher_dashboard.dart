@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'teacher_login.dart';
 import 'createQuiz.dart';
 import 'quizesScreen.dart';
+import 'quizList.dart';
+
 class teacherDashboard extends StatelessWidget {
   teacherDashboard({super.key});
 
@@ -53,7 +55,9 @@ class teacherDashboard extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TeacherQuizzesListScreen()));
+              },
               child: const Text('View Student Submissions'),
             ),
             const SizedBox(height: 15),
