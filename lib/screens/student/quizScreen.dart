@@ -87,41 +87,81 @@ class _quizScreenState extends State<QuizScreen> {
     }
   }
 
-  void _finishQuiz() {
-    // Show Result Dialog
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text("Quiz Completed!"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.emoji_events, color: Colors.amber, size: 50),
-            const SizedBox(height: 10),
-            Text(
-              "You scored $_score / ${_questions.length}",
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+  void _finishQuiz() async{
+    setState(() => _isSubmitting = true);
+
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // 1. Fetch Student Name (for Teacher's convenience)
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        String studentName = "Unknown Student";
+        if (userDoc.exists) {
+          studentName = userDoc['fullName'] ?? "Unknown";
+        }
+
+        // 2. Save Submission to Firestore
+        await FirebaseFirestore.instance.collection('submissions').add({
+          'quizId': widget.quizId,
+          'studentId': user.uid,
+          'studentName': studentName,
+          'score': _score,
+          'totalQuestions': _questions.length,
+          'submittedAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      // 3. Show Result Dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Text("Quiz Completed!"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.emoji_events, color: Colors.amber, size: 50),
+                const SizedBox(height: 10),
+                Text(
+                  "You scored $_score / ${_questions.length}",
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  "Result submitted to teacher.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
             ),
-            const SizedBox(height: 5),
-            const Text(
-              "(Short answers require manual grading)",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close Dialog
-              Navigator.pop(context); // Go back to List
-            },
-            child: const Text("Close"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close Dialog
+                  Navigator.pop(context); // Go back to List
+                },
+                child: const Text("Close"),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error submitting quiz: $e")),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
+    }
   }
 
 

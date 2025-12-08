@@ -38,7 +38,7 @@ class _courseCardState extends State<courseCard> {
               children: [
                 TextButton(
                   onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => quizesPage(quizTitle: "Quiz 1", status: "pending", dueDate: "Today")));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => quizesPage(quizTitle: "Quiz 1", dueDate: "Today")));
                   },
                   child: Text("PYTHON",style: TextStyle(fontWeight: FontWeight.bold,),),
                 ),

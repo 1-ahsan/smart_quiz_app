@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'quizScreen.dart';
 
 class quizesPage extends StatelessWidget {
   final String quizTitle;
   final String courseTitle = "Course Title";
-  final String status; // 'Pending', 'Graded', 'Missed', 'Submitted'
   final String dueDate;
   final String? obtainedMarks; // Nullable, only needed if graded
   final String? totalMarks;
@@ -14,13 +14,12 @@ class quizesPage extends StatelessWidget {
   const quizesPage({
     super.key,
     required this.quizTitle,
-    required this.status,
     required this.dueDate,
     this.obtainedMarks,
     this.totalMarks,
   });
 
-  Color _getStatusColor() {
+  Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'graded':
         return Colors.green;
@@ -43,117 +42,150 @@ class quizesPage extends StatelessWidget {
     String title = data['title'] ?? 'Untitled Quiz';
 
     // In a real app, you would check a 'submissions' collection to see the status
-    String status = "Pending";
     String dueDate = "25 Oct";
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.grey.shade200),
-      ),
-      elevation: 4,
-      margin: EdgeInsets.all(16),
-      child: Padding(
-          padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                    onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder:  (context) => QuizScreen(quizId: quizId)));
-                    },
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                ),
-                SizedBox(width: 5,),
-                Container(
-                  decoration: BoxDecoration(
-                    color: _getStatusColor().withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: _getStatusColor(),width: 1),
-                  ),
-                  child: Text(
-                    status.toUpperCase(),
-                    style: TextStyle(
-                      color: _getStatusColor(),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
 
-                const SizedBox(height: 8),
+    User? user = FirebaseAuth.instance.currentUser;
 
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('submissions')
+            .where('quizId', isEqualTo: quizId)
+            .where('studentId', isEqualTo: user?.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
 
+          String currentStatus = "Pending";
+          String? marks;
+          String? total;
+          bool isSubmitted = false;
 
-              ],
+          // Check if we have data (meaning a submission exists)
+          if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+            var submissionData = snapshot.data!.docs.first.data() as Map<String, dynamic>;
+            isSubmitted = true;
+            currentStatus = "Graded"; // Assuming auto-graded means it's graded
+            marks = submissionData['score'].toString();
+            total = submissionData['totalQuestions'].toString();
+          }
+
+          return Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: Colors.grey.shade200),
             ),
-
-            const Divider(height: 25, thickness: 1),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.calendar_today_rounded),
-                    const SizedBox(width: 5,),
-                    Text(
-                      "Due: $dueDate",
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-
-                if (status.toLowerCase() == 'graded' && obtainedMarks != null)
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: "Grade: ",
-                          style: TextStyle(color: Colors.black54, fontSize: 14),
-                        ),
-                        TextSpan(
-                          text: "$obtainedMarks",
-                          style: const TextStyle(
-                            color: Colors.green,
+            elevation: 4,
+            margin: EdgeInsets.all(16),
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      TextButton(
+                        onPressed: (){
+                          // Only allow taking quiz if NOT submitted
+                          if (!isSubmitted) {
+                            Navigator.push(context, MaterialPageRoute(builder:  (context) => QuizScreen(quizId: quizId)));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("You have already submitted this quiz."))
+                            );
+                          }
+                        },
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            color: isSubmitted ? Colors.grey : Colors.black87, // Grey out if done
                           ),
                         ),
-                        TextSpan(
-                          text: "/$totalMarks",
-                          style: const TextStyle(color: Colors.black54, fontSize: 14),
+                      ),
+                      SizedBox(width: 5,),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: _getStatusColor(currentStatus).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: _getStatusColor(currentStatus),width: 1),
                         ),
-                      ],
-                    ),
-                  )
-                else
-                // Shows a simple icon if it's pending/submitted
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 16,
-                    color: Colors.grey[400],
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: Text(
+                          currentStatus.toUpperCase(),
+                          style: TextStyle(
+                            color: _getStatusColor(currentStatus),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+                    ],
                   ),
 
+                  const Divider(height: 25, thickness: 1),
 
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today_rounded),
+                          const SizedBox(width: 5,),
+                          Text(
+                            "Due: $dueDate",
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Show Grade if submitted, otherwise show arrow
+                      if (isSubmitted && marks != null)
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: "Grade: ",
+                                style: TextStyle(color: Colors.black54, fontSize: 14),
+                              ),
+                              TextSpan(
+                                text: "$marks",
+                                style: const TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              TextSpan(
+                                text: "/$total",
+                                style: const TextStyle(color: Colors.black54, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                      // Shows a simple icon if it's pending
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                          color: Colors.grey[400],
+                        ),
+
+
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
+          );
+        }
     );
+
   }
 
   Widget info(){
