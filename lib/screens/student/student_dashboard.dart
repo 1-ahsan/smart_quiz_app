@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'studentDashboardpage.dart';
 import 'profilePage.dart';
-import 'coursesPage.dart';
+import 'quizList.dart';
 
 
 class StudentDashboard extends StatefulWidget {
@@ -19,7 +19,7 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   final List<Widget> _pages = [
     Dashboard(),
-    courses(),
+    quizesList(),
     profile(),
     Padding(
       padding: const EdgeInsets.all(20),

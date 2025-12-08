@@ -3,20 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'quizScreen.dart';
 
-class quizesPage extends StatelessWidget {
-  final String quizTitle;
-  final String courseTitle = "Course Title";
-  final String dueDate;
-  final String? obtainedMarks; // Nullable, only needed if graded
-  final String? totalMarks;
+class quizesList extends StatelessWidget {
 
 
-  const quizesPage({
+  const quizesList({
     super.key,
-    required this.quizTitle,
-    required this.dueDate,
-    this.obtainedMarks,
-    this.totalMarks,
   });
 
   Color _getStatusColor(String status) {
@@ -244,7 +235,7 @@ class quizesPage extends StatelessWidget {
             )
         ),
         title: Text(
-          courseTitle.toUpperCase(),
+          "Quizes",
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
