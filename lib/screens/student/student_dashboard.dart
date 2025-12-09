@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'studentDashboardpage.dart';
 import 'profilePage.dart';
 import 'quizList.dart';
 
@@ -18,7 +17,6 @@ class _StudentDashboardState extends State<StudentDashboard> {
   int _index=0;
 
   final List<Widget> _pages = [
-    Dashboard(),
     quizesList(),
     profile(),
     Padding(
@@ -120,13 +118,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
           });
         },
         items: [
-          BottomNavigationBarItem(icon: Icon(
-              Icons.dashboard_customize),
-            label: "Home",
-          ),
           BottomNavigationBarItem(
               icon: Icon(Icons.list),
-            label: "Courses",
+            label: "Quizes",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.perm_identity_rounded),

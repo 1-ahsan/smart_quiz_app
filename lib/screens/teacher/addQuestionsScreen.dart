@@ -4,15 +4,12 @@ import 'package:flutter/material.dart';
 
 class AddQuestionAcreen extends StatefulWidget{
   final String quizTitle;
-  final String coursName;
-  final String description;
+  final DateTime deadline;
 
   AddQuestionAcreen({
-
     super.key,
     required this.quizTitle,
-    required this.coursName,
-    required this.description,
+    required this.deadline,
   });
 
   @override
@@ -102,8 +99,7 @@ class _AddQuestionAcreenStates extends State<AddQuestionAcreen>{
       await ref.set({
         'quizId': ref.id,
         'title': widget.quizTitle,
-        'courseName': widget.coursName,
-        'description': widget.description,
+        'deadline': widget.deadline,
         'teacherId': user.uid,
         'createdAt': FieldValue.serverTimestamp(),
         'questionCount': _questions.length,

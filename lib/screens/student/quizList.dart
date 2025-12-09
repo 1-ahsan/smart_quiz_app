@@ -219,40 +219,7 @@ class quizesList extends StatelessWidget {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: (){
-              Navigator.pop(context);
-            },
-            icon: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: Icon(Icons.arrow_back),
-              height: 30,
-              width: 30,
-            )
-        ),
-        title: Text(
-          "Quizes",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                "assets/images/purpleBackground.png",
-              ),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-      ),
+
       body: Column(
         children: [
           info(),
